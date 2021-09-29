@@ -1,4 +1,5 @@
 use std::{
+    ffi::OsString,
     io::{BufRead, BufReader},
     process::{Command, Stdio},
 };
@@ -48,7 +49,8 @@ fn need_to_capture(line: &str) -> bool {
 }
 
 fn main() -> std::io::Result<()> {
-    let mut cmd = Command::new("cargo");
+    let cargo_path = std::env::var_os("CARGO").unwrap_or_else(|| OsString::from("cargo"));
+    let mut cmd = Command::new(cargo_path);
 
     let mut args = std::env::args_os();
     // The first argument is meant to be skipped anyhow.
