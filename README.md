@@ -19,7 +19,9 @@ between `cargo` and your command, like the following:
 * `cargo clippy` → `cargo single-line clippy`,
 * ... and so forth.
 
-To enforce colorful output, add a `--color=always` to your cargo command.
+By default, when running from a terminal, the plugin enforces a colorful output
+by running `cargo` with a `--color=always` argument. To override the behavior,
+add an explicit `--color MODE` flag to your command line.
 
 [![asciicast](https://asciinema.org/a/P62DfpZ4muCXiQEZWh6LnA93L.svg)](https://asciinema.org/a/P62DfpZ4muCXiQEZWh6LnA93L)
 
