@@ -1,0 +1,2 @@
+[alias]
+single-line = "run --bin cargo-single-line --"

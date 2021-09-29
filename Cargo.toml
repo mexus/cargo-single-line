@@ -1,0 +1,14 @@
+[package]
+name = "cargo-single-line"
+version = "0.1.0"
+edition = "2018"
+authors = ["mexus <null@mexus.xyz>"]
+description = "A cargo plugin to shrink cargo's output"
+categories = ["development-tools::cargo-plugins"]
+license = "Apache-2.0/MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+regex = "1.5.4"
+once_cell = "1.8.0"
