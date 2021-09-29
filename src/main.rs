@@ -81,7 +81,7 @@ fn main() -> std::io::Result<()> {
         let mut has_newline = true;
         loop {
             line.clear();
-            let bytes_read = child_stderr.read_line(&mut line).unwrap();
+            let bytes_read = child_stderr.read_line(&mut line)?;
             if bytes_read == 0 {
                 // EOF
                 break;
@@ -102,11 +102,16 @@ fn main() -> std::io::Result<()> {
         if !has_newline {
             eprintln!();
         }
+        Ok::<_, std::io::Error>(())
     });
 
     child.wait()?;
-    stderr_thread
+    if let Err(e) = stderr_thread
         .join()
-        .expect("stderr handling thread panicked");
+        .expect("stderr handling thread panicked")
+    {
+        eprintln!("Unable to capture cargo's stderr: {:#}\n", e);
+        std::process::exit(1);
+    }
     Ok(())
 }
