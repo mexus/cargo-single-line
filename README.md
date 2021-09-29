@@ -1,5 +1,7 @@
 # cargo single-line
 
+![Crates.io](https://img.shields.io/crates/v/cargo-single-line)
+
 A simple cargo plugin that shrinks the visible cargo output to a single line
 (okay, in the best case scenario).
 
@@ -38,7 +40,7 @@ $ cargo install --path .
 ```
 
 
-[stderr]: https://en.wikipedia.org/wiki/Standard_error
+[stderr]: https://en.wikipedia.org/wiki/Standard_streams#Standard_error_(stderr)
 [newline]: https://en.wikipedia.org/wiki/Newline
 [carriage]: https://en.wikipedia.org/wiki/Carriage_return
 [crates]: https://crates.io/
