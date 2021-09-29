@@ -6,6 +6,7 @@ authors = ["mexus <null@mexus.xyz>"]
 description = "A cargo plugin to shrink cargo's output"
 categories = ["development-tools::cargo-plugins"]
 license = "Apache-2.0/MIT"
+repository = "https://github.com/mexus/cargo-single-line"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
