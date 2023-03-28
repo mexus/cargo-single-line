@@ -24,7 +24,7 @@ dependencies = [
 
 [[package]]
 name = "cargo-single-line"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "atty",
  "once_cell",
