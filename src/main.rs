@@ -6,27 +6,31 @@ use std::{
 
 use once_cell::sync::Lazy;
 
+fn color_regex() -> regex::Regex {
+    // We use the following regular expression to strip the color codes from the
+    // beginning of the line. See https://stackoverflow.com/a/18000433/1449426
+    // for the explanation on the regular expression.
+    regex::Regex::new(r#"^\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]"#).expect("Regex is well-formed")
+}
+
+/// Trims the color codes at the start of the input.
+fn trim_start_color(input: &str) -> &str {
+    static RE: Lazy<regex::Regex> = Lazy::new(color_regex);
+
+    // There might be whitespaces before the color codes.
+    let mut input = input.trim_start();
+    while let Some(captures) = RE.captures(input) {
+        // Keep stripping the color codes from the beginning of the line.
+        let whole_match = captures.get(0).expect("The string matched");
+        input = &input[whole_match.end()..];
+    }
+    input.trim_start()
+}
+
 /// Checks whether the line starts with one of the given prefixes, color codes
 /// excluded.
 fn starts_with(line: &str, prefixes: &[&str]) -> bool {
-    static RE: Lazy<regex::Regex> = Lazy::new(|| {
-        // We use the following regular expression to strip the color codes from
-        // the beginning of the line. See
-        // https://stackoverflow.com/a/18000433/1449426 for the explanation on
-        // the regular expression.
-        regex::Regex::new(r#"^\x1B\[([0-9]{1,3}(;[0-9]{1,2})?)?[mGK]"#)
-            .expect("Regex is well-formed")
-    });
-
-    // There might be whitespaces before the color codes.
-    let mut line = line.trim_start();
-    while let Some(captures) = RE.captures(line) {
-        // Keep stripping the color codes from the beginning of the line.
-        let whole_match = captures.get(0).expect("The string matched");
-        line = &line[whole_match.end()..];
-    }
-    // There might be whitespaces after the color codes are trimmed.
-    let line = line.trim_start();
+    let line = trim_start_color(line);
 
     // If there are no prefixes, the `any` method will return `false`, meaning
     // the given line does not start with any of the non-existing prefixes,
@@ -44,6 +48,10 @@ fn need_to_capture(line: &str) -> bool {
         "Updating",
         "Downloading",
         "Downloaded",
+        "Blocking",
+        "Adding",
+        "Removing",
+        "Downgrading",
     ];
     starts_with(line, PREFIXES)
 }
@@ -119,4 +127,36 @@ fn main() -> std::io::Result<()> {
         std::process::exit(1);
     }
     Ok(())
+}
+
+#[test]
+fn verify_regex() {
+    let re = color_regex();
+    let input = "\u{1b}[1m\u{1b}[32m    Finished";
+
+    let finding = re.find(input).unwrap();
+    assert_eq!(finding.as_str(), "\u{1b}[1m");
+    let input = &input[finding.end()..];
+
+    let finding = re.find(input).unwrap();
+    assert_eq!(finding.as_str(), "\u{1b}[32m");
+    let input = &input[finding.end()..];
+
+    assert!(re.find(input).is_none());
+}
+
+#[test]
+fn verify_trim() {
+    let re = color_regex();
+    let example = "\u{1b}[1m\u{1b}[32m    Finished\u{1b}[0m dev [unoptimized + debuginfo] target(s) in 0.01s\n";
+
+    let mut line = example.trim();
+    while let Some(captures) = re.captures(line) {
+        // Keep stripping the color codes from the beginning of the line.
+        let whole_match = captures.get(0).expect("The string matched");
+        line = &line[whole_match.end()..];
+    }
+    // There might be whitespaces after the color codes are trimmed.
+    let line = line.trim_start();
+    assert!(line.starts_with("Finished"));
 }

@@ -1,7 +1,7 @@
 [package]
 name = "cargo-single-line"
-version = "0.1.5"
-edition = "2018"
+version = "0.1.6"
+edition = "2021"
 authors = ["mexus <null@mexus.xyz>"]
 description = "A cargo plugin to shrink cargo's output"
 categories = ["development-tools::cargo-plugins"]
